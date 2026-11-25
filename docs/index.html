@@ -113,7 +113,8 @@
       <p>Serveren må aldrig kunne nå bureauets filserver. Produktdata som varenummeret hentes i stedet af et lille program på medarbejderens egen maskine, som kun kan læse og kun svarer lokalt.</p>
     </div>
     <div class="decision"><span class="label">Beslutning · 9. juli 2026</span>
-      <p>Systemet siger aldrig "godkendt". Er alle automatiske tjek uden fund, bliver dommen "afventer manuel bekræftelse, ikke klar til produktion". Et menneske kan afgøre punkter, der kræver vurdering, men ikke omstøde en dom, systemet har målt.</p>
+      <p>Er alle automatiske tjek uden fund, og mangler der kun de to punkter, der kræver en fysisk måling med en stregkodeverifier, bliver dommen "automatiske tjek OK, afventer manuel bekræftelse, ikke klar til produktion". Når et menneske har bekræftet de to punkter, bliver dommen en fuld godkendelse. Kan systemet ikke tjekke noget, blokerer det, til det er afklaret.</p>
+      <p>Det var en tidlig beslutning. Version 2 går et skridt videre: der findes slet ingen godkendelse, kun "ingen fund på de tjekkede punkter".</p>
     </div>
     <p>Version 1 kom på server i september 2026, men blev ikke taget i brug af bureauet.</p>
   </div>
@@ -124,7 +125,7 @@
   <div class="wrap">
     <p class="kicker">4 · Revisionen · august til oktober 2026</p>
     <h2>Mange grønne tests betød ikke, at systemet fangede fejl</h2>
-    <p>Da systemet voksede, satte jeg agenter til at revidere det: Hvor kan systemet sige "bestået" uden grund? Kan en regel overhovedet dømme? Hvad gør koden egentlig? Revisionerne fandt det, testtallet ikke kunne vise.</p>
+    <p>Da systemet voksede, satte jeg agenter til at revidere det: Hvor kan systemet sige "bestået" uden grund? Et "bestået" er i praksis en godkendelse af reglen, så et falsk "bestået" er en falsk godkendelse. Kan en regel overhovedet dømme? Hvad gør koden egentlig? Revisionerne fandt det, testtallet ikke kunne vise.</p>
     <figure>
       <img src="assets/diagrams/06_revision_da.svg" alt="Revisionens fund og beslutninger">
     </figure>
@@ -162,7 +163,7 @@
       <figcaption>Brugerrejsen i version 1 og i TO-BE.</figcaption>
     </figure>
     <div class="decision"><span class="label">Beslutning · 21. november 2026</span>
-      <p>Retningsskift. Jeg venter ikke på et interview eller en gennemgang hos bureauet, før jeg bygger. I stedet bygges ét regelområde ad gangen som en Claude-skill, og vi lærer af hvert område. Principperne fra TO-BE følger med: de tre prøver, statusserne, at intet kaldes "godkendt", og at kundepraksis holdes adskilt fra standarden.</p>
+      <p>Retningsskift. Ét regelområde ad gangen bygges som en Claude-skill, og jeg lærer af hvert område. Principperne fra TO-BE følger med: de tre prøver, statusserne, at intet kaldes "godkendt", og at kundepraksis holdes adskilt fra standarden.</p>
     </div>
     <div class="decision"><span class="label">Beslutning · 21. november 2026</span>
       <p>Først kun regelbaserede krav: lov, standarder og mærkningsordninger. Layout og kunderegler kommer senere. Et område vælges ikke kun efter, hvor tit det nævnes i korrekturer, men også hvis det i dag tjekkes manuelt uden at blive nævnt.</p>
@@ -181,6 +182,7 @@
     </figure>
     <div class="decision"><span class="label">Beslutning · 22. november 2026</span>
       <p>En rettelse er først færdig, når en frisk agent, der ikke har set facit, har gentestet den. Den, der byggede et område, laver ikke selv kildekontrollen.</p>
+      <p>Skærpet 25. november 2026: agenten bruger selv skillen, og alle resultater skal passe med facit. Er ét resultat forkert, rettes det, og testen køres igen med en ny agent.</p>
     </div>
 
     <h3>Demo: stregkode-skillen på en opdigtet etiket</h3>
@@ -235,10 +237,11 @@ resultat["ikke_tjekket"] = IKKE_TJEKKET + [...]</code></pre>
     <h3>Status for de tre områder</h3>
     <div class="tablewrap"><table>
       <tr><th>Område</th><th>Version</th><th>Testet</th></tr>
-      <tr><td>Stregkode (GS1)</td><td>2.1</td><td>Regression på 45 filer. Måleusikkerheden afprøvet på 14 vektor-PDF'er. En gennemgang mod GS1 fandt ti forkerte henvisninger, som er rettet og kontrolleret af en uafhængig agent</td></tr>
-      <tr><td>Nettoindhold og ℮-mærke</td><td>0.6</td><td>Første blindtest fandt 12 af 14 fejlvarianter og gav ingen falsk RET på 6 fejlfri filer. Målingerne afveg højst 0,037 mm fra en uafhængig agents måling</td></tr>
-      <tr><td>Allergener</td><td>0.1</td><td>Første testrunde fandt 8 af 10 fejlfiler. Anden runde missede to nye varianter. De er rettet og gentestet af en ny agent</td></tr>
+      <tr><td>Stregkode (GS1)</td><td>2.1</td><td>Regression på 45 filer. Måleusikkerheden afprøvet på 14 vektor-PDF'er. En gennemgang mod GS1 fandt ti forkerte henvisninger, som er rettet og kontrolleret af en uafhængig agent. En gentest af en frisk agent fandt fire ting mere, som er rettet. De rettelser er endnu ikke gentestet</td></tr>
+      <tr><td>Nettoindhold og ℮-mærke</td><td>0.6</td><td>Første blindtest fandt 12 af 14 fejlvarianter og gav ingen falsk RET på 6 fejlfri filer. Målingerne afveg højst 0,037 mm fra en uafhængig agents måling. En tredje frisk agent dømte alle fem gentestfiler rigtigt, og siden er kun tekster rettet</td></tr>
+      <tr><td>Allergener</td><td>0.1</td><td>Første testrunde fandt 8 af 10 fejlfiler. Anden runde missede to nye varianter. Den ene er rettet og gentestet af en ny agent og giver nu RET. Den anden giver VURDER, fordi kilderne ikke afgør, om kravet gælder pr. sprog</td></tr>
     </table></div>
+    <p>Hvert område har rettelser, som endnu ikke er gentestet af en ny, frisk agent. Efter min egen regel er ingen af dem derfor helt færdige.</p>
     <p>Den offentlige udgave af stregkode-skillen har kun GS1-laget. Kundepraksis og bureauets skabeloner er taget ud. Den giver samme mål og statusser som den interne udgave på alle 20 testfiler, og dens 8 automatiske tests består.</p>
   </div>
 </section>
@@ -267,7 +270,7 @@ resultat["ikke_tjekket"] = IKKE_TJEKKET + [...]</code></pre>
     <div class="tablewrap"><table>
       <tr><th>Dato</th><th>Beslutning</th><th>Hvorfor, og hvad der skete</th></tr>
       <tr><td class="date">9. jul 2026</td><td>Først kun bureauets egne filer</td><td>Det er dem, korrekturen faktisk kører på. Andre formater kører en mere forsigtig vej med ærlige "kan ikke tjekke" i stedet for gæt</td></tr>
-      <tr><td class="date">9. jul 2026</td><td>Aldrig "godkendt"</td><td>Uden fund bliver dommen "afventer manuel bekræftelse". Et menneske kan bekræfte, men ikke omstøde en målt dom</td></tr>
+      <tr><td class="date">9. jul 2026</td><td>Afventer manuel bekræftelse</td><td>Uden fund på de automatiske tjek bliver dommen "afventer manuel bekræftelse", fordi to punkter kræver en fysisk verifier. Først menneskets bekræftelse giver en fuld godkendelse. Version 2 har ingen godkendelse</td></tr>
       <tr><td class="date">7. aug 2026</td><td>Rigtige designs er en baseline, ikke en facitliste</td><td>De er gået til tryk, men ikke efterprøvet uafhængigt. Det førte til tests med syntetiske fejl, der viser, om en regel kan dømme</td></tr>
       <tr><td class="date">17. sep 2026</td><td>Systemet giver aldrig selv bureauets godkendelse til tryk</td><td>Godkendelsen er bureauets ansvar, også når systemet senere kan foreslå rettelser</td></tr>
       <tr><td class="date">17. sep 2026</td><td>Ikke låst til én kunde</td><td>Der startes ét sted, men arkitekturen må ikke bindes til det</td></tr>
@@ -278,7 +281,7 @@ resultat["ikke_tjekket"] = IKKE_TJEKKET + [...]</code></pre>
       <tr><td class="date">21. nov 2026</td><td>Retningsskift til skills</td><td>Ét regelområde ad gangen i stedet for et nyt stort websystem. Vi lærer af hvert område</td></tr>
       <tr><td class="date">21. nov 2026</td><td>Først kun regelbaserede krav</td><td>Lov, standarder og mærkningsordninger. Layout og kunderegler senere</td></tr>
       <tr><td class="date">21. nov 2026</td><td>Områder vælges ikke kun efter hyppighed</td><td>Også det, der i dag tjekkes manuelt uden at blive nævnt, er værd at automatisere</td></tr>
-      <tr><td class="date">22. nov 2026</td><td>Gentest af en frisk agent</td><td>En rettelse er først færdig, når en agent uden facit har testet den igen</td></tr>
+      <tr><td class="date">22. nov 2026</td><td>Gentest af en frisk agent</td><td>En rettelse er først færdig, når en agent uden facit har testet den igen. Skærpet 25. nov: alle resultater skal være rigtige</td></tr>
       <tr><td class="date">22. nov 2026</td><td>Måleusikkerheden siges altid</td><td>0,05 mm, sagt så en grafiker forstår det. Tæt på grænsen bliver VURDER, ikke RET</td></tr>
     </table></div>
   </div>

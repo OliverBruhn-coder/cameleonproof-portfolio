@@ -49,11 +49,11 @@ To indsigter ændrede retningen:
 
 **Beslutning (21. september 2026):** Serveren må aldrig kunne nå bureauets filserver. Et lille læseprogram på medarbejderens maskine henter produktdata lokalt.
 
-**Beslutning (9. juli 2026):** Systemet siger aldrig "godkendt". Uden fund bliver dommen "afventer manuel bekræftelse". Et menneske kan afgøre det, der kræver vurdering, men ikke omstøde en målt dom.
+**Beslutning (9. juli 2026):** Er alle automatiske tjek uden fund, og mangler der kun de to punkter, der kræver en fysisk måling med en stregkodeverifier, bliver dommen "afventer manuel bekræftelse". Først når et menneske har bekræftet dem, bliver dommen en fuld godkendelse. Det var en tidlig beslutning. Version 2 går videre: der findes ingen godkendelse, kun "ingen fund på de tjekkede punkter".
 
 ## 5. Revisionen
 
-Da systemet voksede, satte jeg agenter til at revidere det. Hvor kan systemet sige "bestået" uden grund? Kan en regel overhovedet dømme?
+Da systemet voksede, satte jeg agenter til at revidere det. Hvor kan systemet sige "bestået" uden grund? Et "bestået" er i praksis en godkendelse af reglen, så et falsk "bestået" er en falsk godkendelse. Kan en regel overhovedet dømme?
 
 ![Revisionen](../../docs/assets/diagrams/06_revision_da.svg)
 
@@ -73,7 +73,7 @@ Efter revisionen afklarede jeg 15 beslutninger og skrev et TO-BE med 12 moduler,
 
 ![Modenhed](../../docs/assets/diagrams/07_maturity_da.svg)
 
-**Beslutning (21. november 2026):** Retningsskift. Jeg venter ikke på et interview eller en gennemgang hos bureauet. Ét regelområde ad gangen bygges som en Claude-skill. TO-BE's principper følger med. Først kun regelbaserede krav: lov, standarder og mærkningsordninger.
+**Beslutning (21. november 2026):** Retningsskift. Ét regelområde ad gangen bygges som en Claude-skill. TO-BE's principper følger med. Først kun regelbaserede krav: lov, standarder og mærkningsordninger.
 
 ## 7. Version 2 i dag
 
@@ -83,11 +83,13 @@ Hvert område er en skill med tre dele: `SKILL.md` (vejledningen til modellen), 
 
 | Område | Version | Testet |
 |---|---|---|
-| Stregkode (GS1) | 2.1 | Regression på 45 filer. Måleusikkerhed på 0,05 mm afprøvet på 14 vektor-PDF'er. Ti forkerte GS1-henvisninger fundet, rettet og kontrolleret af en uafhængig agent |
-| Nettoindhold og ℮-mærke | 0.6 | Første blindtest fandt 12 af 14 fejlvarianter, ingen falsk "ret" på 6 fejlfri. Højst 0,037 mm fra en uafhængig agents måling |
-| Allergener | 0.1 | Første runde fandt 8 af 10 fejlfiler. Anden runde missede to nye varianter, som er rettet og gentestet |
+| Stregkode (GS1) | 2.1 | Regression på 45 filer. Måleusikkerhed på 0,05 mm afprøvet på 14 vektor-PDF'er. Ti forkerte GS1-henvisninger fundet, rettet og kontrolleret af en uafhængig agent. En gentest af en frisk agent fandt fire ting mere, som er rettet og endnu ikke gentestet |
+| Nettoindhold og ℮-mærke | 0.6 | Første blindtest fandt 12 af 14 fejlvarianter, ingen falsk "ret" på 6 fejlfri. Højst 0,037 mm fra en uafhængig agents måling. En tredje frisk agent dømte alle fem gentestfiler rigtigt, og siden er kun tekster rettet |
+| Allergener | 0.1 | Første runde fandt 8 af 10 fejlfiler. Anden runde missede to nye varianter. Den ene er rettet og gentestet og giver nu RET. Den anden giver VURDER, fordi kilderne ikke afgør, om kravet gælder pr. sprog |
 
-**Beslutning (22. november 2026):** En rettelse er først færdig, når en frisk agent, der ikke har set facit, har gentestet den.
+Hvert område har rettelser, som endnu ikke er gentestet af en ny, frisk agent. Efter min egen regel er ingen af dem derfor helt færdige.
+
+**Beslutning (22. november 2026):** En rettelse er først færdig, når en frisk agent, der ikke har set facit, har gentestet den. Skærpet 25. november 2026: agenten bruger selv skillen, og alle resultater skal passe med facit. Er ét resultat forkert, rettes det, og testen køres igen med en ny agent.
 
 **Offentlig udgave.** Stregkode-skillen ligger i repoet med kun GS1-laget. Kundepraksis og bureauets skabeloner er taget ud. Den giver samme mål og statusser som den interne udgave på alle 20 testfiler, og 8 automatiske tests består. Websiden viser en kørsel på en opdigtet etiket: koden er for lav (ret), og den sidder 5 mm fra kanten (vurder).
 

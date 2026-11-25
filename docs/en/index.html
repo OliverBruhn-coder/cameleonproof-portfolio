@@ -113,7 +113,8 @@
       <p>The server must never be able to reach the agency's file server. Product facts such as the GTIN are fetched instead by a small program on the employee's own machine, which can only read and only answers locally.</p>
     </div>
     <div class="decision"><span class="label">Decision · 9 July 2026</span>
-      <p>The system never says "approved". If all automated checks find nothing, the verdict is "awaiting manual confirmation, not ready for production". A person can settle points that need judgement, but cannot overrule a verdict the system has measured.</p>
+      <p>If all automatic checks find nothing and only the two points that need a physical measurement with a barcode verifier remain, the verdict is "automatic checks OK, awaiting manual confirmation, not ready for production". Once a person has confirmed the two points, the verdict becomes a full approval. If the system cannot check something, it blocks until that is settled.</p>
+      <p>This was an early decision. Version 2 goes a step further: there is no approval at all, only "no findings on the points checked".</p>
     </div>
     <p>Version 1 was deployed to a server in September 2026 but was not taken into use by the agency.</p>
   </div>
@@ -124,7 +125,7 @@
   <div class="wrap">
     <p class="kicker">4 · The audit · August to October 2026</p>
     <h2>Lots of green tests did not mean the system caught errors</h2>
-    <p>As the system grew, I set agents to audit it: Where can the system say "pass" without reason? Can a rule convict at all? What does the code actually do? The audits found what the test count could not show.</p>
+    <p>As the system grew, I set agents to audit it: Where can the system say "pass" without reason? A "pass" is in practice an approval of the rule, so a false "pass" is a false approval. Can a rule convict at all? What does the code actually do? The audits found what the test count could not show.</p>
     <figure>
       <img src="../assets/diagrams/06_revision_en.svg" alt="What the audit found and what was decided">
     </figure>
@@ -162,7 +163,7 @@
       <figcaption>The user journey in version 1 and in the TO-BE.</figcaption>
     </figure>
     <div class="decision"><span class="label">Decision · 21 November 2026</span>
-      <p>Change of direction. I do not wait for an interview or a review at the agency before building. Instead, one rule area at a time is built as a Claude skill, and we learn from each one. The TO-BE principles come along: the three tests, the statuses, nothing is ever called "approved", and client practice is kept apart from the standard.</p>
+      <p>Change of direction. One rule area at a time is built as a Claude skill, and I learn from each one. The TO-BE principles come along: the three tests, the statuses, nothing is ever called "approved", and client practice is kept apart from the standard.</p>
     </div>
     <div class="decision"><span class="label">Decision · 21 November 2026</span>
       <p>Rule-based requirements first: law, standards and labelling schemes. Layout and client rules come later. An area is not chosen only by how often it appears in proofs, but also when it is checked by hand today without being mentioned.</p>
@@ -181,6 +182,7 @@
     </figure>
     <div class="decision"><span class="label">Decision · 22 November 2026</span>
       <p>A fix is only done when a fresh agent that has not seen the answer key has retested it. Whoever built an area does not do its source check.</p>
+      <p>Tightened on 25 November 2026: the agent uses the skill itself, and every result must match the answer key. If one result is wrong, it is fixed and the test is run again with a new agent.</p>
     </div>
 
     <h3>Demo: the barcode skill on a made-up label</h3>
@@ -235,10 +237,11 @@ resultat["ikke_tjekket"] = IKKE_TJEKKET + [...]</code></pre>
     <h3>Status of the three areas</h3>
     <div class="tablewrap"><table>
       <tr><th>Area</th><th>Version</th><th>Tested</th></tr>
-      <tr><td>Barcode (GS1)</td><td>2.1</td><td>Regression on 45 files. The measurement uncertainty tested on 14 vector PDFs. A review against GS1 found ten wrong references, which were fixed and checked by an independent agent</td></tr>
-      <tr><td>Net quantity and ℮-mark</td><td>0.6</td><td>The first blind test found 12 of 14 error variants and raised no false RET on 6 error-free files. Measurements were at most 0.037 mm off an independent agent's measurement</td></tr>
-      <tr><td>Allergens</td><td>0.1</td><td>The first test round found 8 of 10 error files. The second round missed two new variants. They were fixed and retested by a new agent</td></tr>
+      <tr><td>Barcode (GS1)</td><td>2.1</td><td>Regression on 45 files. The measurement uncertainty tested on 14 vector PDFs. A review against GS1 found ten wrong references, which were fixed and checked by an independent agent. A retest by a fresh agent found four more things, which are fixed. Those fixes have not been retested yet</td></tr>
+      <tr><td>Net quantity and ℮-mark</td><td>0.6</td><td>The first blind test found 12 of 14 error variants and raised no false RET on 6 error-free files. Measurements were at most 0.037 mm off an independent agent's measurement. A third fresh agent judged all five retest files correctly, and since then only texts have been changed</td></tr>
+      <tr><td>Allergens</td><td>0.1</td><td>The first test round found 8 of 10 error files. The second round missed two new variants. One was fixed and retested by a new agent and now gives RET. The other gives VURDER, because the sources do not settle whether the requirement applies per language</td></tr>
     </table></div>
+    <p>Each area has fixes that have not yet been retested by a new, fresh agent. By my own rule, none of them is fully done.</p>
     <p>The public edition of the barcode skill has only the GS1 layer. Client practice and the agency's templates have been taken out. It gives the same measurements and statuses as the internal edition on all 20 test files, and its 8 automated tests pass.</p>
   </div>
 </section>
@@ -267,7 +270,7 @@ resultat["ikke_tjekket"] = IKKE_TJEKKET + [...]</code></pre>
     <div class="tablewrap"><table>
       <tr><th>Date</th><th>Decision</th><th>Why, and what happened</th></tr>
       <tr><td class="date">9 Jul 2026</td><td>The agency's own files first</td><td>That is what proofing actually runs on. Other formats take a more cautious path with honest "cannot check" instead of guesses</td></tr>
-      <tr><td class="date">9 Jul 2026</td><td>Never "approved"</td><td>With no findings, the verdict is "awaiting manual confirmation". A person can confirm, but not overrule a measured verdict</td></tr>
+      <tr><td class="date">9 Jul 2026</td><td>Awaiting manual confirmation</td><td>With no findings on the automatic checks, the verdict is "awaiting manual confirmation", because two points need a physical verifier. Only a person's confirmation gives a full approval. Version 2 has no approval</td></tr>
       <tr><td class="date">7 Aug 2026</td><td>Real designs are a baseline, not an answer key</td><td>They went to print but were not verified independently. That led to tests with synthetic errors that show whether a rule can convict</td></tr>
       <tr><td class="date">17 Sep 2026</td><td>The system never issues the agency's print approval</td><td>Approval is the agency's responsibility, also when the system can later suggest fixes</td></tr>
       <tr><td class="date">17 Sep 2026</td><td>Not tied to one client</td><td>It starts in one place, but the architecture must not be bound to it</td></tr>
@@ -278,7 +281,7 @@ resultat["ikke_tjekket"] = IKKE_TJEKKET + [...]</code></pre>
       <tr><td class="date">21 Nov 2026</td><td>Change of direction to skills</td><td>One rule area at a time instead of a new large web system. We learn from each area</td></tr>
       <tr><td class="date">21 Nov 2026</td><td>Rule-based requirements first</td><td>Law, standards and labelling schemes. Layout and client rules later</td></tr>
       <tr><td class="date">21 Nov 2026</td><td>Areas are not chosen by frequency alone</td><td>What is checked by hand today without being mentioned is also worth automating</td></tr>
-      <tr><td class="date">22 Nov 2026</td><td>Retest by a fresh agent</td><td>A fix is only done when an agent without the answer key has tested it again</td></tr>
+      <tr><td class="date">22 Nov 2026</td><td>Retest by a fresh agent</td><td>A fix is only done when an agent without the answer key has tested it again. Tightened on 25 Nov: every result must be correct</td></tr>
       <tr><td class="date">22 Nov 2026</td><td>Always state the uncertainty</td><td>0.05 mm, said so a designer understands it. Close to the limit is VURDER, not RET</td></tr>
     </table></div>
   </div>

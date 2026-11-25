@@ -49,11 +49,11 @@ Two insights changed the direction:
 
 **Decision (21 September 2026):** The server must never be able to reach the agency's file server. A small read-only program on the employee's machine fetches product facts locally.
 
-**Decision (9 July 2026):** The system never says "approved". With no findings, the verdict is "awaiting manual confirmation". A person can settle what needs judgement, but cannot overrule a measured verdict.
+**Decision (9 July 2026):** If all automatic checks find nothing and only the two points that need a physical measurement with a barcode verifier remain, the verdict is "awaiting manual confirmation". Only when a person has confirmed them does the verdict become a full approval. This was an early decision. Version 2 goes further: there is no approval, only "no findings on the points checked".
 
 ## 5. The audit
 
-As the system grew, I set agents to audit it. Where can the system say "pass" without reason? Can a rule convict at all?
+As the system grew, I set agents to audit it. Where can the system say "pass" without reason? A "pass" is in practice an approval of the rule, so a false "pass" is a false approval. Can a rule convict at all?
 
 ![The audit](../../docs/assets/diagrams/06_revision_en.svg)
 
@@ -73,7 +73,7 @@ After the audit I settled 15 decisions and wrote a TO-BE with 12 modules, which 
 
 ![Maturity](../../docs/assets/diagrams/07_maturity_en.svg)
 
-**Decision (21 November 2026):** Change of direction. I do not wait for an interview or a review at the agency. One rule area at a time is built as a Claude skill. The TO-BE principles come along. Rule-based requirements first: law, standards and labelling schemes.
+**Decision (21 November 2026):** Change of direction. One rule area at a time is built as a Claude skill. The TO-BE principles come along. Rule-based requirements first: law, standards and labelling schemes.
 
 ## 7. Version 2 today
 
@@ -83,11 +83,13 @@ Each area is a skill with three parts: `SKILL.md` (instructions for the model), 
 
 | Area | Version | Tested |
 |---|---|---|
-| Barcode (GS1) | 2.1 | Regression on 45 files. Measurement uncertainty of 0.05 mm tested on 14 vector PDFs. Ten wrong GS1 references found, fixed and checked by an independent agent |
-| Net quantity and ℮-mark | 0.6 | The first blind test found 12 of 14 error variants, no false "fix" on 6 error-free files. At most 0.037 mm off an independent agent's measurement |
-| Allergens | 0.1 | The first round found 8 of 10 error files. The second round missed two new variants, which were fixed and retested |
+| Barcode (GS1) | 2.1 | Regression on 45 files. Measurement uncertainty of 0.05 mm tested on 14 vector PDFs. Ten wrong GS1 references found, fixed and checked by an independent agent. A retest by a fresh agent found four more things, which are fixed and not yet retested |
+| Net quantity and ℮-mark | 0.6 | The first blind test found 12 of 14 error variants, no false "fix" on 6 error-free files. At most 0.037 mm off an independent agent's measurement. A third fresh agent judged all five retest files correctly, and since then only texts have been changed |
+| Allergens | 0.1 | The first round found 8 of 10 error files. The second round missed two new variants. One was fixed and retested and now gives RET. The other gives VURDER, because the sources do not settle whether the requirement applies per language |
 
-**Decision (22 November 2026):** A fix is only done when a fresh agent that has not seen the answer key has retested it.
+Each area has fixes that have not yet been retested by a new, fresh agent. By my own rule, none of them is fully done.
+
+**Decision (22 November 2026):** A fix is only done when a fresh agent that has not seen the answer key has retested it. Tightened on 25 November 2026: the agent uses the skill itself, and every result must match the answer key. If one result is wrong, it is fixed and the test is run again with a new agent.
 
 **Public edition.** The barcode skill is in the repository with only the GS1 layer. Client practice and the agency's templates have been taken out. It gives the same measurements and statuses as the internal edition on all 20 test files, and 8 automated tests pass. The website shows a run on a made-up label: the code is too short (fix), and it sits 5 mm from the edge (judge).
 

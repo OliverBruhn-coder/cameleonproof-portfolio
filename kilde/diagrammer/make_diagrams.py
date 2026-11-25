@@ -92,7 +92,7 @@ TEXT = {
         ],
         "out": [["Skal rettes", "målt uden for kravet"], ["Kræver vurdering", "tæt på grænsen eller usikker"],
                 ["Kan ikke tjekkes", "måling mangler, aldrig bestået"], ["Ingen fund", "på de tjekkede punkter"]],
-        "missing": "Mangler en måling, bliver reglen 'kan ikke tjekkes'. Systemet skriver aldrig 'godkendt'.",
+        "missing": "Mangler en måling, bliver reglen 'kan ikke tjekkes'. Aldrig 'bestået' uden måling.",
         "roles_title": "Samspillet mellem regelmotor, AI og menneske",
         "lane_code": "Regelmotor (almindelig kode)",
         "lane_ai": "AI (sprogmodel)",
@@ -112,7 +112,7 @@ TEXT = {
             ["7. Pilot", "konkrete", "korrekturopgaver"],
         ],
         "loop": "Hver fejl, der slipper igennem, bliver en ny testfil",
-        "done_rule": "En rettelse er først færdig, når en agent, der ikke har set facit, har gentestet den.",
+        "done_rule": "Først færdig, når en agent uden facit har gentestet den, og alle resultater er rigtige.",
         "areas": "Bygget indtil nu: stregkode (v2.1), nettoindhold og ℮-mærke (v0.6), allergener (v0.1)",
     },
     "en": {
@@ -145,7 +145,7 @@ TEXT = {
         ],
         "out": [["Must fix", "measured outside the requirement"], ["Needs judgement", "near the limit or uncertain"],
                 ["Cannot check", "measurement missing, never a pass"], ["No findings", "on the items checked"]],
-        "missing": "A missing measurement makes the rule 'cannot check'. The system never says 'approved'.",
+        "missing": "A missing measurement makes the rule 'cannot check'. Never 'pass' without a measurement.",
         "roles_title": "How the rule engine, AI and people share the work",
         "lane_code": "Rule engine (plain code)",
         "lane_ai": "AI (language model)",
@@ -165,7 +165,7 @@ TEXT = {
             ["7. Pilot", "real proofing", "tasks"],
         ],
         "loop": "Every fault that slips through becomes a new test file",
-        "done_rule": "A fix is only done when an agent that has not seen the answer key has retested it.",
+        "done_rule": "Done only when an agent without the answer key has retested it and every result is correct.",
         "areas": "Built so far: barcode (v2.1), net quantity and e-mark (v0.6), allergens (v0.1)",
     },
 }
@@ -267,7 +267,7 @@ TEXT2 = {
         "tl": [
             ("2025", ["Speciale om", "prissætning.", "Behovet ses"]),
             ("Feb 2026", ["Version 1", "startes som", "websystem"]),
-            ("Jul 2026", ["Afgrænsning.", "Systemet siger", "aldrig 'godkendt'"]),
+            ("Jul 2026", ["Afgrænsning.", "Først kun", "bureauets filer"]),
             ("Aug 2026", ["Revision af", "fødevarereglerne:", "5 falske godkendelser"]),
             ("Sep 2026", ["På server bag", "HTTPS. AS-IS-", "revision af koden"]),
             ("Okt 2026", ["Grilling:", "15 beslutninger,", "de tre prøver"]),
@@ -329,7 +329,7 @@ TEXT2 = {
         "tl": [
             ("2025", ["Thesis on", "pricing. The", "need is spotted"]),
             ("Feb 2026", ["Version 1", "starts as a", "web system"]),
-            ("Jul 2026", ["Scope set.", "The system never", "says 'approved'"]),
+            ("Jul 2026", ["Scope set.", "The agency's", "own files first"]),
             ("Aug 2026", ["Audit of the", "food rules:", "5 false passes"]),
             ("Sep 2026", ["On a server", "behind HTTPS.", "AS-IS code audit"]),
             ("Oct 2026", ["Grilling:", "15 decisions,", "the three tests"]),
