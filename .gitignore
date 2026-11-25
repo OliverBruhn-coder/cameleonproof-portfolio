@@ -1,4 +1,5 @@
 __pycache__/
 *.pyc
 .DS_Store
-docs/_*.html
+kilde/case-study/_*.html
+stregkodekorrektur/resultat/

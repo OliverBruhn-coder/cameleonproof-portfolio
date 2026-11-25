@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CameleonProof · Oliver Bruhn Lyngaa Wegeberg</title>
+<meta name="description" content="Case study: automated proofing of packaging artwork, built with AI coding agents and plain code. The whole journey from business problem to system.">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#top">CameleonProof</a>
+    <nav>
+      <a href="#problem">Problem</a>
+      <a href="#analysis">Analysis</a>
+      <a href="#version-1">Version 1</a>
+      <a href="#audit">Audit</a>
+      <a href="#direction">New direction</a>
+      <a href="#version-2">Version 2</a>
+      <a href="#how-i-work">How I work</a>
+      <a href="#status">Status</a>
+    </nav>
+    <a class="lang" href="../">Dansk</a>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- 1 -->
+<div class="hero">
+  <div class="wrap">
+    <p class="who"><strong>Oliver Bruhn Lyngaa Wegeberg</strong> · Cand.merc. (MSc in Economics and Business Administration) and AI-first developer · <a href="https://linkedin.com/in/oliver-bruhn-71607317a">LinkedIn</a></p>
+    <h1>CameleonProof: proofing packaging artwork with AI agents and plain code</h1>
+    <p class="lead">During my master's thesis I saw that proofing packaging ties up a lot of specialist time at a design agency, and I proposed building a system for the task. I owned the problem, the requirements, the decisions and the verification. AI coding agents wrote the code. This page shows the whole journey, including what did not go to plan.</p>
+    <div class="status">The system is under continuous development and is being piloted on real proofing tasks at Cameleon.</div>
+    <div class="buttons">
+      <a class="btn primary" href="../pdf/CameleonProof_case_study_EN.pdf">Read the case (PDF)</a>
+      <a class="btn" href="https://github.com/OliverBruhn-coder/cameleonproof-portfolio/tree/main/stregkodekorrektur">See the code</a>
+      <a class="btn" href="#version-2">See the demo</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="big">2,179</div><p>automated test cases in version 1. Tests decide what reaches the server</p></div>
+      <div class="stat"><div class="big">37 of 52</div><p>food-labelling rules had never triggered their fail branch. My own audit found it</p></div>
+      <div class="stat"><div class="big">30 of 42</div><p>barcode rules caught an inserted error in a test with synthetic error files</p></div>
+      <div class="stat"><div class="big">3</div><p>rule areas built as skills in version 2, each with primary sources and blind tests</p></div>
+    </div>
+    <p class="note">The numbers describe my own system. The agency's internal figures and client data are not shown.</p>
+  </div>
+</div>
+
+<!-- 2 -->
+<section id="problem">
+  <div class="wrap">
+    <p class="kicker">1 · The problem</p>
+    <h2>Proofing is specialist work under time pressure</h2>
+    <p>Before packaging artwork goes to print, it is proofread. Is the barcode big enough and far enough from the cut line? Is the quantity printed in large enough figures, and is the ℮-mark correct? Are the allergens emphasised? The rules live in EU regulations, Danish executive orders, the GS1 standard and the clients' own manuals.</p>
+    <p>An error that slips through is found only after printing. An error caught late costs an extra proofing round that pulls both designer and proofreader away from other work. Management estimates that the agency proofs several hundred packaging designs a year, at about an hour each. That is an estimate, not a measured saving.</p>
+    <p>I wrote my master's thesis at the agency on pricing in creative firms and combined several years of project, time and accounting data in Python. The thesis ended in a pricing framework that management uses today. While working with the data I saw another pattern: proofing was a recurring task, and much of it consisted of checking things that are written down as rules. That was outside the thesis, so I proposed a new project myself.</p>
+    <figure>
+      <img src="../assets/diagrams/05_timeline_en.svg" alt="Timeline from the 2025 thesis to the change of direction in November 2026">
+      <figcaption>The journey. Dates come from the project's own files and commits.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 3 -->
+<section id="analysis">
+  <div class="wrap">
+    <p class="kicker">2 · The analysis</p>
+    <h2>Data first, then requirements</h2>
+    <p>Before and during the build I used the agency's own data to understand the task:</p>
+    <ul>
+      <li><strong>Time registrations</strong> on proofing tasks, linked to projects, to test management's estimate. The analysis pointed to the same order of magnitude.</li>
+      <li><strong>The proofing rounds on the file server</strong>, to see what actually gets corrected. The comments were classified with AI and not checked by a person, so the result is used as an estimate.</li>
+      <li><strong>Primary sources:</strong> EU Regulation 1169/2011 on food information, Danish executive orders and guidance, and the GS1 General Specifications.</li>
+    </ul>
+    <p>Client data and findings are not shown here. The analysis gave two insights that changed the direction:</p>
+    <div class="two">
+      <div>
+        <h3>Rules are only part of proofing</h3>
+        <p>Rule-based requirements appear to be a minor part of what gets corrected in practice. The rest is client requirements and layout. So the system does not promise to replace proofing, and rules, client requirements and the agency's standards are kept in separate layers.</p>
+      </div>
+      <div>
+        <h3>Designers work at the limit</h3>
+        <p>Type for quantity statements is often set exactly at the minimum, so clean files measure right around the requirement. A hard cut-off would raise false alarms on correct files. That led to a measured error margin and a "close to the limit" status.</p>
+      </div>
+    </div>
+    <div class="decision"><span class="label">Decision · 17 September 2026</span>
+      <p>Not everything a proofreader corrects is an error against a rule. Much of it is taste and preference. The system must tell the difference, and it must never issue the agency's approval for print itself. That approval is the agency's responsibility.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section id="version-1">
+  <div class="wrap">
+    <p class="kicker">3 · Version 1 · February to September 2026</p>
+    <h2>A web system on a server behind HTTPS</h2>
+    <p>The first version was a web system. The designer uploads a PDF and gets three things back: what must be fixed, what a person needs to judge, and what the system could not check. Every finding points to the rule and the source it rests on.</p>
+    <figure>
+      <img src="../assets/diagrams/01_architecture_en.svg" alt="Architecture of version 1">
+      <figcaption>Version 1. Drawn from the AS-IS audit of the code in September 2026.</figcaption>
+    </figure>
+    <ul>
+      <li><strong>Rules are data, not code.</strong> 110 rule cards in YAML with thresholds, conditions and source IDs. 42 barcode rules are switched on in the interface. For 40 of them, a test looks up the citation in the source document itself.</li>
+      <li><strong>Python and FastAPI</strong> with login and per-case access. PyMuPDF reads the PDF, zxing-cpp decodes the barcode, and Tesseract is the fallback when text is outlined. Results are stored in SQLite.</li>
+      <li><strong>2,179 automated test cases</strong> and a regression baseline of 1,110 locked results on 10 real designs. GitHub Actions deploys only when everything is green.</li>
+      <li><strong>AI in one place only.</strong> Claude vision suggests where the barcode sits when layout analysis returns "cannot check". The answer can at most be advisory.</li>
+    </ul>
+    <div class="decision"><span class="label">Decision · 21 September 2026</span>
+      <p>The server must never be able to reach the agency's file server. Product facts such as the GTIN are fetched instead by a small program on the employee's own machine, which can only read and only answers locally.</p>
+    </div>
+    <div class="decision"><span class="label">Decision · 9 July 2026</span>
+      <p>The system never says "approved". If all automated checks find nothing, the verdict is "awaiting manual confirmation, not ready for production". A person can settle points that need judgement, but cannot overrule a verdict the system has measured.</p>
+    </div>
+    <p>Version 1 was deployed to a server in September 2026 but was not taken into use by the agency.</p>
+  </div>
+</section>
+
+<!-- 5 -->
+<section id="audit">
+  <div class="wrap">
+    <p class="kicker">4 · The audit · August to October 2026</p>
+    <h2>Lots of green tests did not mean the system caught errors</h2>
+    <p>As the system grew, I set agents to audit it: Where can the system say "pass" without reason? Can a rule convict at all? What does the code actually do? The audits found what the test count could not show.</p>
+    <figure>
+      <img src="../assets/diagrams/06_revision_en.svg" alt="What the audit found and what was decided">
+    </figure>
+    <div class="finding"><span class="label">Finding · August 2026</span>
+      <p>The audit of the food-labelling rules found five ways an error could slip through as a pass. One example: the net quantity was "found" in the nutrition table's "per 100 g". Another: allergen emphasis passed simply because an ingredient list existed. All five were disarmed.</p>
+    </div>
+    <ul>
+      <li>Known false passes on barcodes went from 5 to 0.</li>
+      <li>Barcode cards without a verified source went from 33 of 41 to 3 of 42.</li>
+      <li>The 10 real designs went to print, but nobody has verified them independently. They are a baseline that catches unintended changes, not an answer key.</li>
+      <li>The AS-IS audit in September went through all the code and marked every claim VERIFIED, PARTIAL or UNKNOWN. The analysis of what a full system must know was then checked in an independent review.</li>
+    </ul>
+    <div class="decision"><span class="label">Decision · October 2026</span>
+      <p>A rule may raise a red fail only after it has passed three tests: no false fails on approved files, seen failing at least once, and the catch rate is measured. The food-labelling rules are hidden as unproven until they pass.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section id="direction">
+  <div class="wrap">
+    <p class="kicker">5 · New design and change of direction · October to November 2026</p>
+    <h2>A TO-BE that was never built, and why that was right</h2>
+    <p>After the audit I settled 15 decisions in a structured round of questions and answers and wrote a TO-BE with 12 modules. It described version 2 as a further development of the web system. Three of its key ideas:</p>
+    <figure>
+      <img src="../assets/diagrams/07_maturity_en.svg" alt="The maturity ladder: hidden, check, proven">
+      <figcaption>A rule moves up only when it has proven it can catch an error.</figcaption>
+    </figure>
+    <figure>
+      <img src="../assets/diagrams/08_absence_en.svg" alt="Five states for something that is missing">
+      <figcaption>"Missing" is not one answer. Each explanation needs its own action.</figcaption>
+    </figure>
+    <figure>
+      <img src="../assets/diagrams/09_journey_en.svg" alt="The user journey from seven steps to four">
+      <figcaption>The user journey in version 1 and in the TO-BE.</figcaption>
+    </figure>
+    <div class="decision"><span class="label">Decision · 21 November 2026</span>
+      <p>Change of direction. I do not wait for an interview or a review at the agency before building. Instead, one rule area at a time is built as a Claude skill, and we learn from each one. The TO-BE principles come along: the three tests, the statuses, nothing is ever called "approved", and client practice is kept apart from the standard.</p>
+    </div>
+    <div class="decision"><span class="label">Decision · 21 November 2026</span>
+      <p>Rule-based requirements first: law, standards and labelling schemes. Layout and client rules come later. An area is not chosen only by how often it appears in proofs, but also when it is checked by hand today without being mentioned.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section id="version-2">
+  <div class="wrap">
+    <p class="kicker">6 · Version 2 today</p>
+    <h2>One skill per rule area, with measurements in code and explanations from AI</h2>
+    <p>Each area is a Claude skill: instructions for the model, a measuring script in Python and a source list with sections and page numbers. The script measures and sets the status. The model looks at the images, asks for what is missing and explains the result to the designer.</p>
+    <figure>
+      <img src="../assets/diagrams/04_v2_process_en.svg" alt="The process per area in version 2">
+    </figure>
+    <div class="decision"><span class="label">Decision · 22 November 2026</span>
+      <p>A fix is only done when a fresh agent that has not seen the answer key has retested it. Whoever built an area does not do its source check.</p>
+    </div>
+
+    <h3>Demo: the barcode skill on a made-up label</h3>
+    <p>The label was made for the demo with two errors that the skill does not know about in advance: the code is too short, and it sits too close to the edge. The images and the note come from a real run of the public edition. The skill answers in Danish, because its users are Danish designers.</p>
+    <div class="two">
+      <figure>
+        <img src="../assets/demo/oversigt_s1.png" alt="Overview of the label with the code marked">
+        <figcaption>The page with the code (red) and the label edge (blue).</figcaption>
+      </figure>
+      <figure>
+        <img src="../assets/demo/kode_1.png" alt="The barcode with the measured zones drawn in">
+        <figcaption>Red: the bars as measured. Green: the quiet zones. Orange: how tall the code should be.</figcaption>
+      </figure>
+    </div>
+    <div class="notat">
+      <h4>Must fix</h4>
+      <p><span class="pill ret">RET</span><strong>Barcode height (SK-02).</strong> Measured 17.40 mm. GS1 requires at least 22.85 mm at this size, per table 5-44. The measurement can be off by about 0.05 mm, so even with that uncertainty the code is too short.</p>
+      <h4>Needs your judgement</h4>
+      <p><span class="pill vurder">VURDER</span><strong>Distance to the edge (SK-11).</strong> 5.0 mm from the label edge. GS1 says at least 8 mm "where possible", so it is not an absolute requirement.</p>
+      <p><span class="pill vurder">VURDER</span><strong>GTIN (VD-01).</strong> Valid check digit, but only product data can say whether it is this product's number.</p>
+      <h4>No findings on the checked points</h4>
+      <p><span class="pill ingen">INGEN_FUND</span>Size, guard bars, quiet zones, gap to the digits, digit size and content, contrast. That is not an approval.</p>
+    </div>
+    <p class="codecap">The full note, the measurements and the images are in <a href="https://github.com/OliverBruhn-coder/cameleonproof-portfolio/tree/main/stregkodekorrektur/eksempel">stregkodekorrektur/eksempel</a>.</p>
+
+    <h3>Three places in the code</h3>
+    <p><strong>Every check points to a source.</strong> Each check in the script has a checkpoint ID, a source ID and its place in the GS1 standard. So every finding in the report can be looked up.</p>
+<pre><code>TJEKPUNKT = {
+    "stoerrelse": ("SK-01", "K-01", "GS1 v26 tabel 5-44 (5.12.3.1)", "GS1"),
+    "hoejde":     ("SK-02", "K-02, K-03", "GS1 v26 tabel 5-44 med fodnote (**), 6.3.3.4", "GS1"),
+    "kant":       ("SK-11", "K-09, K-10", "GS1 v26 6.3.3.3 (når muligt), 6.2.3.3", "GS1"),
+    ...
+}</code></pre>
+    <p class="codecap"><a href="https://github.com/OliverBruhn-coder/cameleonproof-portfolio/blob/main/stregkodekorrektur/scripts/maal.py#L113">scripts/maal.py, line 113</a>. The code is in Danish, like its users.</p>
+
+    <p><strong>Measurement uncertainty decides the status.</strong> If the code is too short even after subtracting the uncertainty, it is RET (must fix). If it is just under the requirement but within the uncertainty, it is VURDER (judge). A designer should not get a red error on a file that may be correct.</p>
+<pre><code>if h + TOL_MM &lt; krav_h * 0.998:      # too short, even with the uncertainty
+    st = ret
+elif h &lt; krav_h * 0.998:             # just under, but within the uncertainty
+    st = VURDER
+else:
+    st = INGEN_FUND</code></pre>
+    <p class="codecap"><a href="https://github.com/OliverBruhn-coder/cameleonproof-portfolio/blob/main/stregkodekorrektur/scripts/maal.py#L1046">scripts/maal.py, line 1046</a>. Shortened. <code>TOL_MM</code> is 0.05 mm, tested on 14 vector PDFs with a known answer key.</p>
+
+    <p><strong>"No findings" is not an approval.</strong> The report lists the points checked without findings, and next to them everything that was not checked.</p>
+<pre><code># INGEN_FUND er ikke en godkendelse.  (No findings is not an approval.)
+resultat["ingen_fund_paa"] = sorted({f"{t['tjekpunkt']} {t['navn']}" for t in alle
+                                     if t["status"] == INGEN_FUND and t.get("tjekpunkt")})
+resultat["ikke_tjekket"] = IKKE_TJEKKET + [...]</code></pre>
+    <p class="codecap"><a href="https://github.com/OliverBruhn-coder/cameleonproof-portfolio/blob/main/stregkodekorrektur/scripts/maal.py#L1703">scripts/maal.py, line 1703</a></p>
+
+    <h3>Status of the three areas</h3>
+    <div class="tablewrap"><table>
+      <tr><th>Area</th><th>Version</th><th>Tested</th></tr>
+      <tr><td>Barcode (GS1)</td><td>2.1</td><td>Regression on 45 files. The measurement uncertainty tested on 14 vector PDFs. A review against GS1 found ten wrong references, which were fixed and checked by an independent agent</td></tr>
+      <tr><td>Net quantity and ℮-mark</td><td>0.6</td><td>The first blind test found 12 of 14 error variants and raised no false RET on 6 error-free files. Measurements were at most 0.037 mm off an independent agent's measurement</td></tr>
+      <tr><td>Allergens</td><td>0.1</td><td>The first test round found 8 of 10 error files. The second round missed two new variants. They were fixed and retested by a new agent</td></tr>
+    </table></div>
+    <p>The public edition of the barcode skill has only the GS1 layer. Client practice and the agency's templates have been taken out. It gives the same measurements and statuses as the internal edition on all 20 test files, and its 8 automated tests pass.</p>
+  </div>
+</section>
+
+<!-- 8 -->
+<section id="how-i-work">
+  <div class="wrap">
+    <p class="kicker">7 · How I work</p>
+    <h2>The agents write the code. I stand behind what the system claims</h2>
+    <p>I have a cand.merc. (MSc in Economics and Business Administration), not a degree in programming. The code and most documents in the project are written by AI coding agents, mainly Claude Code. In version 1, Claude is a co-author of 133 of 175 commits. My part is the problem, the requirements, the decisions and the verification.</p>
+    <div class="tablewrap"><table>
+      <tr><th></th><th>What</th><th>Who</th></tr>
+      <tr><td><strong>Decided</strong></td><td>Problem and scope, which areas come first, the status model, security and data access, test method, error margin, what AI may and may not do</td><td>Me</td></tr>
+      <tr><td><strong>Built</strong></td><td>Code, tests, reports, server setup and documentation</td><td>AI coding agents from my written directives</td></tr>
+      <tr><td><strong>Verified</strong></td><td>Results on known files, audits, blind tests and source checks</td><td>Me, with independent agents that have no answer key</td></tr>
+    </table></div>
+    <figure>
+      <img src="../assets/diagrams/03_rules_ai_human_en.svg" alt="How the rule engine, AI and people share the work">
+    </figure>
+    <figure>
+      <img src="../assets/diagrams/10_method_en.svg" alt="The method is chosen per task with the same quality bar">
+    </figure>
+
+    <h3>Decision log</h3>
+    <p>My own decisions, as they are dated in the project's files. Decisions based on the agency's or its clients' practice are left out.</p>
+    <div class="tablewrap"><table>
+      <tr><th>Date</th><th>Decision</th><th>Why, and what happened</th></tr>
+      <tr><td class="date">9 Jul 2026</td><td>The agency's own files first</td><td>That is what proofing actually runs on. Other formats take a more cautious path with honest "cannot check" instead of guesses</td></tr>
+      <tr><td class="date">9 Jul 2026</td><td>Never "approved"</td><td>With no findings, the verdict is "awaiting manual confirmation". A person can confirm, but not overrule a measured verdict</td></tr>
+      <tr><td class="date">7 Aug 2026</td><td>Real designs are a baseline, not an answer key</td><td>They went to print but were not verified independently. That led to tests with synthetic errors that show whether a rule can convict</td></tr>
+      <tr><td class="date">17 Sep 2026</td><td>The system never issues the agency's print approval</td><td>Approval is the agency's responsibility, also when the system can later suggest fixes</td></tr>
+      <tr><td class="date">17 Sep 2026</td><td>Not tied to one client</td><td>It starts in one place, but the architecture must not be bound to it</td></tr>
+      <tr><td class="date">21 Sep 2026</td><td>The server never reaches the file server</td><td>A read-only program on the employee's machine fetches facts locally. A compromised server cannot reach the archive</td></tr>
+      <tr><td class="date">26 Sep 2026</td><td>The edge is measured to the actual die line</td><td>Also on round and shaped labels. Under 8 mm is advisory. If the code runs over the edge, it is an error</td></tr>
+      <tr><td class="date">Oct 2026</td><td>The three tests</td><td>A rule may raise a red fail only after passing them. The food-labelling rules were hidden as unproven</td></tr>
+      <tr><td class="date">Oct 2026</td><td>Code for numbers, AI for language</td><td>Measurement and geometry in plain code. AI suggests, and a person confirms</td></tr>
+      <tr><td class="date">21 Nov 2026</td><td>Change of direction to skills</td><td>One rule area at a time instead of a new large web system. We learn from each area</td></tr>
+      <tr><td class="date">21 Nov 2026</td><td>Rule-based requirements first</td><td>Law, standards and labelling schemes. Layout and client rules later</td></tr>
+      <tr><td class="date">21 Nov 2026</td><td>Areas are not chosen by frequency alone</td><td>What is checked by hand today without being mentioned is also worth automating</td></tr>
+      <tr><td class="date">22 Nov 2026</td><td>Retest by a fresh agent</td><td>A fix is only done when an agent without the answer key has tested it again</td></tr>
+      <tr><td class="date">22 Nov 2026</td><td>Always state the uncertainty</td><td>0.05 mm, said so a designer understands it. Close to the limit is VURDER, not RET</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section id="status">
+  <div class="wrap">
+    <p class="kicker">8 · Status and limitations</p>
+    <h2>What works, and what does not yet</h2>
+    <p><strong>The system is under continuous development and is being piloted on real proofing tasks at Cameleon.</strong> There are no pilot results to show yet.</p>
+    <ul>
+      <li><strong>Everyday use:</strong> Version 1 was not taken into use. Version 2 is not yet part of day-to-day proofing.</li>
+      <li><strong>The agency's sign-off:</strong> No area has been reviewed by a specialist at the agency. Checkpoints and sources are my and the agents' work, checked against the primary sources.</li>
+      <li><strong>Coverage:</strong> Only rule-based requirements in the areas named. Client requirements and layout are not included.</li>
+      <li><strong>Testing:</strong> The measurement uncertainty has been tested on vector PDFs, not on image files, printed files or with a verifier.</li>
+      <li><strong>Business value:</strong> Fewer errors, fewer extra rounds and more time for work that needs judgement. None of it is measured yet. The pilot should produce the first numbers.</li>
+    </ul>
+    <p>The code, the rule base and the agency's files in the full system are confidential and not included here. The public code is shown as a work sample. All rights reserved.</p>
+    <div class="buttons">
+      <a class="btn primary" href="https://linkedin.com/in/oliver-bruhn-71607317a">Contact me on LinkedIn</a>
+      <a class="btn" href="../pdf/CameleonProof_case_study_EN.pdf">The case as PDF</a>
+      <a class="btn" href="https://github.com/OliverBruhn-coder/cameleonproof-portfolio">The repository on GitHub</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">Oliver Bruhn Lyngaa Wegeberg · November 2026 · <a href="../">Dansk version</a></div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,248 @@
+{
+ "fil": "demo_etiket.pdf",
+ "skill_version": "2.1-offentlig",
+ "kildetype": "pdf",
+ "sider": 1,
+ "koder": [
+  {
+   "nr": 1,
+   "type": "EAN-13",
+   "nummer": "2000000000015",
+   "tillaeg": null,
+   "side": 1,
+   "retning_grader": 0,
+   "maal": {
+    "hoejde_inden_for_stanse_mm": null,
+    "cifre_uden_for_stanse": false,
+    "X_mm": 0.33,
+    "bredde_mm": 31.35,
+    "hoejde_mm": 17.4,
+    "guard_forlaengelse_mm": 1.65,
+    "lyszone_v_mm": 16.0,
+    "lyszone_v_til_kant_af_udsnit": true,
+    "lyszone_h_mm": 15.01,
+    "lyszone_h_til_kant_af_udsnit": true,
+    "cifre_afstand_mm": 1.97,
+    "cifre_hoejde_mm": 2.1,
+    "kontrast": 1.0,
+    "streg_roed": 0.0,
+    "baggrund_roed": 255.0,
+    "omvendt": false,
+    "tillaeg_luft_mm": null,
+    "cifre_laest": "2000000000015",
+    "cifre_kilde": "tekst i PDF'en",
+    "upca_stil": false,
+    "tekniske_ignoreret": true,
+    "kontur_form": "rektangulær",
+    "stoerrelse_pct": 100.0,
+    "krav_hoejde_mm": 22.85
+   },
+   "tjek": [
+    {
+     "id": "stoerrelse",
+     "tjekpunkt": "SK-01",
+     "kilde_id": "K-01",
+     "lag": "GS1",
+     "navn": "Stregkodens størrelse",
+     "status": "INGEN_FUND",
+     "tekst": "X er 0.330 mm (100 %).",
+     "maalt": "0.330 mm (100 %)",
+     "krav": "0,264-0,660 mm",
+     "kilde": "GS1 v26 tabel 5-44 (5.12.3.1)",
+     "usikkerhed": "X måles med under 0,1 % afvigelse på vektor-PDF'er"
+    },
+    {
+     "id": "hoejde",
+     "tjekpunkt": "SK-02",
+     "kilde_id": "K-02, K-03",
+     "lag": "GS1",
+     "navn": "Stregkodens højde",
+     "status": "RET",
+     "tekst": "Stregerne er 17.40 mm høje. Ved denne størrelse kræver GS1 mindst 22.85 mm (76 % af kravet). GS1 tillader kun lavere kode når det er absolut nødvendigt, og så skal den højest mulige højde bruges. Om det er nødvendigt her, kan scriptet ikke afgøre.",
+     "maalt": "17.40 mm",
+     "krav": "mindst 22.85 mm",
+     "kilde": "GS1 v26 tabel 5-44 med fodnote (**), 6.3.3.4",
+     "usikkerhed": "margin 0.05 mm (afprøvet: højst 0,01 mm afvigelse)"
+    },
+    {
+     "id": "guard",
+     "tjekpunkt": "SK-03",
+     "kilde_id": "K-04",
+     "lag": "GS1",
+     "navn": "Guard bars forlænget",
+     "status": "INGEN_FUND",
+     "tekst": "Guard bars går 1.65 mm ned (ca. 5X).",
+     "maalt": "1.65 mm",
+     "krav": "ca. 1.65 mm",
+     "kilde": "GS1 v26 5.2.3.2",
+     "usikkerhed": "margin 0.05 mm (afprøvet: højst 0,01 mm afvigelse)"
+    },
+    {
+     "id": "lyszone_v",
+     "tjekpunkt": "SK-04",
+     "kilde_id": "K-05",
+     "lag": "GS1",
+     "navn": "Lyszone venstre",
+     "status": "INGEN_FUND",
+     "tekst": "Fri plads venstre: mindst 16.00 mm (48.5X).",
+     "maalt": "mindst 16.00 mm (48.5X)",
+     "krav": "3.63 mm",
+     "kilde": "GS1 v26 tabel 5-44, 5.2.3.4",
+     "usikkerhed": "margin 0.05 mm (afprøvet: højst 0,01 mm afvigelse)"
+    },
+    {
+     "id": "lyszone_h",
+     "tjekpunkt": "SK-04",
+     "kilde_id": "K-05",
+     "lag": "GS1",
+     "navn": "Lyszone højre",
+     "status": "INGEN_FUND",
+     "tekst": "Fri plads højre: mindst 15.01 mm (45.5X).",
+     "maalt": "mindst 15.01 mm (45.5X)",
+     "krav": "2.31 mm",
+     "kilde": "GS1 v26 tabel 5-44, 5.2.3.4",
+     "usikkerhed": "margin 0.05 mm (afprøvet: højst 0,01 mm afvigelse)"
+    },
+    {
+     "id": "cifre_afstand",
+     "tjekpunkt": "SK-06",
+     "kilde_id": "K-06",
+     "lag": "GS1",
+     "navn": "Luft mellem streger og cifre",
+     "status": "INGEN_FUND",
+     "tekst": "1.97 mm luft.",
+     "maalt": "1.97 mm",
+     "krav": "mindst 0.16 mm",
+     "kilde": "GS1 v26 5.2.5",
+     "usikkerhed": "margin 0,02 mm. Ikke afprøvet"
+    },
+    {
+     "id": "cifre_stoerrelse",
+     "tjekpunkt": "SK-07",
+     "kilde_id": "K-07",
+     "lag": "GS1",
+     "navn": "Cifrenes størrelse",
+     "status": "INGEN_FUND",
+     "tekst": "Cifrene er 2.10 mm høje (ca. 3.0 mm skrift).",
+     "maalt": "ca. 3.0 mm",
+     "krav": "mindst 2 mm (anbefaling)",
+     "kilde": "GS1 v26 4.14 regel 2.a.iii (bør)"
+    },
+    {
+     "id": "cifre_tekst",
+     "tjekpunkt": "SK-08",
+     "kilde_id": "K-06",
+     "lag": "GS1",
+     "navn": "Cifrene er de rigtige",
+     "status": "INGEN_FUND",
+     "tekst": "Cifrene under koden er læst (tekst i PDF'en): 2000000000015. Det er nummeret i koden.",
+     "maalt": "2000000000015",
+     "krav": "2000000000015",
+     "kilde": "GS1 v26 5.2.5"
+    },
+    {
+     "id": "kontrast",
+     "tjekpunkt": "SK-10",
+     "kilde_id": "K-08",
+     "lag": "GS1",
+     "navn": "Farve og kontrast",
+     "status": "INGEN_FUND",
+     "tekst": "Kontrast i rødt lys ca. 100%.",
+     "maalt": "ca. 100%",
+     "krav": "mindst 40%",
+     "kilde": "GS1 v26 5.12.5.11.1 og tabel 5-44 (afledt)",
+     "usikkerhed": "tilnærmelse i rødt lys, ikke en verifier-måling. Ikke afprøvet"
+    },
+    {
+     "id": "kant",
+     "tjekpunkt": "SK-11",
+     "kilde_id": "K-09, K-10",
+     "lag": "GS1",
+     "navn": "Afstand til kanten",
+     "status": "VURDER",
+     "tekst": "Koden sidder 5.0 mm fra etikettens kant. GS1 siger, at koden når muligt ikke bør sidde tættere end 8 mm på pakkens kant (GS1 v26 6.3.3.3). Det er ikke et ubetinget krav.",
+     "maalt": "5.0 mm",
+     "krav": "mindst 8 mm",
+     "kilde": "GS1 v26 6.3.3.3 (når muligt), 6.2.3.3",
+     "usikkerhed": "ikke afprøvet"
+    },
+    {
+     "id": "tryk",
+     "tjekpunkt": "SK-25",
+     "kilde_id": "K-08, K-05",
+     "lag": "GS1",
+     "navn": "Printkvalitet og lyszoner på tryk",
+     "status": "EFTER_TRYK",
+     "tekst": "Måles med en stregkode-verifier på prøvetrykket (mindst 1.5/06/660).",
+     "maalt": null,
+     "krav": "1.5/06/660",
+     "kilde": "GS1 v26 tabel 5-44"
+    }
+   ],
+   "linjer": []
+  }
+ ],
+ "fil_tjek": [
+  {
+   "id": "varenummer",
+   "tjekpunkt": "VD-01",
+   "kilde_id": "K-35",
+   "lag": "varedata",
+   "navn": "Varenummer",
+   "status": "VURDER",
+   "tekst": "Koden bærer 2000000000015 med gyldigt kontrolciffer. Om det er det rigtige produkts nummer, kan kun kundens varedata sige. Oplys det med --gtin.",
+   "maalt": "2000000000015",
+   "krav": "produktets GTIN",
+   "kilde": "Oplyst af brugeren (varedata), ikke et GS1-krav"
+  }
+ ],
+ "sider_info": {
+  "1": {
+   "format_mm": [
+    100.0,
+    60.0
+   ],
+   "maalestok": {
+    "status": "bekraeftet",
+    "tekst": "Det oplyste format 100 x 60 mm passer med en ramme på siden, så PDF'en er i 1:1."
+   },
+   "rammer_fundet": 1
+  }
+ },
+ "forbehold": [],
+ "billeder": [
+  "kode_1.png",
+  "kode_1_raa.png",
+  "oversigt_s1.png"
+ ],
+ "opsummering": {
+  "RET": 1,
+  "VURDER": 2,
+  "SE_SELV": 0,
+  "EFTER_TRYK": 1,
+  "IKKE_MAALT": 0,
+  "INGEN_FUND": 8
+ },
+ "ingen_fund_paa": [
+  "SK-01 Stregkodens størrelse",
+  "SK-03 Guard bars forlænget",
+  "SK-04 Lyszone højre",
+  "SK-04 Lyszone venstre",
+  "SK-06 Luft mellem streger og cifre",
+  "SK-07 Cifrenes størrelse",
+  "SK-08 Cifrene er de rigtige",
+  "SK-10 Farve og kontrast"
+ ],
+ "ikke_tjekket": [
+  "Om koden kan scannes i butikken, og printkvaliteten (1.5/06/660). Kræver en verifier på prøvetrykket (SK-25).",
+  "At nummeret er produktets rigtige GTIN, hvis det ikke er oplyst med --gtin.",
+  "Om denne del skal have en stregkode (SK-13) og om det er den rigtige kode til varen.",
+  "Billedets egne punkter: cifrenes skrift (SK-26), placering efter emballagetype (SK-27), fold om hjørner og flapper (SK-28).",
+  "Ikke implementeret endnu: kantafstand højst 100 mm (SK-29), tillæggets højde og lyszone (SK-30), UPC første og sidste ciffer (SK-31), 2D-kodens lyszone og kvalitet (SK-32), tekst ved 2D og DataBar (SK-33), bundmærkning (SK-34).",
+  "UPC-A: scanneren melder et UPC-A som EAN-13 med 0 først, så lyszonerne (9X og 9X) og tillægsafstanden (9X) for UPC-A bruges ikke fuldt ud.",
+  "ISO/IEC 15416 og GS1 Application Standard Profiles (afsnit 8) er ikke læst. Intet er gennemgået af en fagperson.",
+  "Offentlig udgave: kun GS1-laget. Kundepraksis og et bureaus egne skabeloner er taget ud."
+ ],
+ "usikkerhed": "Størrelser i mm måles på stregerne i en gengivelse ved 1200 dpi (0,021 mm pr. pixel). Scriptet bruger en margin på 0.05 mm (ca. 2 pixel) på højde, guard bars og lyszoner. På 14 selvlavede vektor-PDF'er afveg målingerne højst 0,01 mm (X højst 0,0002 mm). Ikke afprøvet på billedfiler, drejede koder, farvet baggrund eller trykte filer. Kontrast er en tilnærmelse og ikke en verifier-måling.",
+ "tid_s": 0.7
+}

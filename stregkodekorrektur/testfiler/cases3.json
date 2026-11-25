@@ -1,0 +1,26 @@
+[
+ {
+  "fil": "syn3_00.pdf",
+  "forventet": "X 0,255: VURDER (on-demand)"
+ },
+ {
+  "fil": "syn3_01.pdf",
+  "forventet": "X 0,240: RET"
+ },
+ {
+  "fil": "syn3_02.pdf",
+  "forventet": "EAN-13 + 2, 8X: INGEN_FUND"
+ },
+ {
+  "fil": "syn3_03.pdf",
+  "forventet": "EAN-13 + 2, 6X: RET"
+ },
+ {
+  "fil": "syn3_04.pdf",
+  "forventet": "UPC-A + 2, 8X: VURDER (zxing melder UPC-A som EAN-13 med 0 først; 9X kræves for UPC-A)"
+ },
+ {
+  "fil": "syn3_05.pdf",
+  "forventet": "UPC-A + 2, 10X: INGEN_FUND"
+ }
+]

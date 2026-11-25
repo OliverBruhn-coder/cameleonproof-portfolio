@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CameleonProof · Oliver Bruhn Lyngaa Wegeberg</title>
+<meta name="description" content="Case: automatisk korrektur af emballagedesign, bygget med AI-kodeagenter og almindelig kode. Hele forløbet fra forretningsproblem til system.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#top">CameleonProof</a>
+    <nav>
+      <a href="#problemet">Problemet</a>
+      <a href="#analysen">Analysen</a>
+      <a href="#version-1">Version 1</a>
+      <a href="#revisionen">Revisionen</a>
+      <a href="#retningsskift">Retningsskift</a>
+      <a href="#version-2">Version 2</a>
+      <a href="#arbejdsmetode">Arbejdsmetode</a>
+      <a href="#status">Status</a>
+    </nav>
+    <a class="lang" href="en/">English</a>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- 1 -->
+<div class="hero">
+  <div class="wrap">
+    <p class="who"><strong>Oliver Bruhn Lyngaa Wegeberg</strong> · Cand.merc. og AI-first udvikler · <a href="https://linkedin.com/in/oliver-bruhn-71607317a">LinkedIn</a></p>
+    <h1>CameleonProof: korrektur af emballagedesign med AI-agenter og almindelig kode</h1>
+    <p class="lead">Under mit speciale så jeg, at korrektur af emballage binder meget specialisttid hos et designbureau, og jeg foreslog selv at bygge et system til opgaven. Jeg har stået for problemet, kravene, beslutningerne og kontrollen. AI-kodeagenter har skrevet koden. Denne side viser hele forløbet, også det, der ikke gik som planlagt.</p>
+    <div class="status">Systemet er under løbende udvikling og afprøves i et pilotforløb med konkrete korrekturopgaver hos Cameleon.</div>
+    <div class="buttons">
+      <a class="btn primary" href="pdf/CameleonProof_case_study_DA.pdf">Læs casen (PDF)</a>
+      <a class="btn" href="https://github.com/OliverBruhn-coder/cameleonproof-portfolio/tree/main/stregkodekorrektur">Se koden</a>
+      <a class="btn" href="#version-2">Se demoen</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="big">2.179</div><p>automatiske testcases i version 1. Tests styrer, hvad der kommer på serveren</p></div>
+      <div class="stat"><div class="big">37 af 52</div><p>fødevareregler havde aldrig udløst deres fejlgren. Det fandt min egen revision</p></div>
+      <div class="stat"><div class="big">30 af 42</div><p>stregkoderegler fangede en indsat fejl i en test med syntetiske fejlfiler</p></div>
+      <div class="stat"><div class="big">3</div><p>regelområder bygget som skills i version 2, hvert med primærkilder og blindtest</p></div>
+    </div>
+    <p class="note">Tallene handler om mit eget system. Bureauets interne tal og kundedata vises ikke.</p>
+  </div>
+</div>
+
+<!-- 2 -->
+<section id="problemet">
+  <div class="wrap">
+    <p class="kicker">1 · Problemet</p>
+    <h2>Korrektur er specialistarbejde under tidspres</h2>
+    <p>Før et emballagedesign går i trykken, bliver det læst korrektur. Er stregkoden stor nok og langt nok fra skærelinjen? Står mængden med store nok tal, og står ℮-mærket rigtigt? Er allergenerne fremhævet? Reglerne står i EU-forordninger, danske bekendtgørelser, GS1-standarden og kundernes egne manualer.</p>
+    <p>En fejl, der slipper igennem, bliver først opdaget efter trykning. En fejl, der bliver fanget sent, giver en ekstra korrekturrunde, hvor både designer og korrekturlæser bliver trukket ud af andet arbejde. Ledelsen anslår, at bureauet laver flere hundrede korrekturer af emballage om året á cirka en time. Det er et skøn, ikke en målt besparelse.</p>
+    <p>Jeg skrev kandidatspeciale hos bureauet om prissætning i kreative virksomheder og koblede flere års projekt-, tids- og regnskabsdata i Python. Specialet endte i en prisramme, som ledelsen bruger i dag. Undervejs i data så jeg et andet mønster: korrektur var en tilbagevendende opgave, og en stor del af den bestod i at kontrollere ting, der står i regler. Det lå uden for specialet, så jeg foreslog selv et nyt projekt.</p>
+    <figure>
+      <img src="assets/diagrams/05_timeline_da.svg" alt="Tidslinje fra speciale i 2025 til retningsskift i november 2026">
+      <figcaption>Forløbet. Datoerne kommer fra projektets egne filer og commits.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 3 -->
+<section id="analysen">
+  <div class="wrap">
+    <p class="kicker">2 · Analysen</p>
+    <h2>Først data, så krav</h2>
+    <p>Før og under byggeriet brugte jeg bureauets egne data til at forstå opgaven:</p>
+    <ul>
+      <li><strong>Tidsregistreringer</strong> på korrekturopgaver, koblet til projekter, for at efterprøve ledelsens skøn. Analysen pegede på samme størrelsesorden.</li>
+      <li><strong>Korrekturrunderne på filserveren</strong>, for at se hvad der faktisk bliver rettet. Kommentarerne blev klassificeret med AI og ikke efterprøvet af et menneske, så resultatet bruges som et skøn.</li>
+      <li><strong>Primærkilder:</strong> EU-forordning 1169/2011 om fødevareinformation, danske bekendtgørelser og vejledninger og GS1 General Specifications.</li>
+    </ul>
+    <p>Data og fund fra kunderne vises ikke her. Analysen gav to indsigter, der ændrede retningen:</p>
+    <div class="two">
+      <div>
+        <h3>Reglerne er kun en del af korrekturen</h3>
+        <p>Regelbaserede krav ser ud til at være en mindre del af det, der rettes i praksis. Resten er kundekrav og layout. Derfor lover systemet ikke at erstatte korrekturen, og regler, kundekrav og bureauets standarder holdes i hver sit lag.</p>
+      </div>
+      <div>
+        <h3>Designere arbejder på grænsen</h3>
+        <p>Skriften til mængdeangivelser sættes tit præcis til minimum, så rene filer måler lige omkring kravet. En skarp grænse ville give falske alarmer på korrekte filer. Det førte til en målt fejlmargin og en status for "tæt på grænsen".</p>
+      </div>
+    </div>
+    <div class="decision"><span class="label">Beslutning · 17. september 2026</span>
+      <p>Ikke alt, en korrekturlæser retter, er en fejl efter en regel. Meget er smag og ønsker. Systemet skal kunne skelne, og det må aldrig selv give bureauets godkendelse til tryk. Den er bureauets ansvar.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section id="version-1">
+  <div class="wrap">
+    <p class="kicker">3 · Version 1 · februar til september 2026</p>
+    <h2>Et websystem på server bag HTTPS</h2>
+    <p>Den første version var et websystem. Designeren uploader en PDF og får tre ting tilbage: hvad der skal rettes, hvad et menneske skal vurdere, og hvad systemet ikke kunne tjekke. Hvert fund peger på den regel og den kilde, det bygger på.</p>
+    <figure>
+      <img src="assets/diagrams/01_architecture_da.svg" alt="Arkitektur for version 1">
+      <figcaption>Version 1. Tegnet efter AS-IS-revisionen af koden fra september 2026.</figcaption>
+    </figure>
+    <ul>
+      <li><strong>Regler er data, ikke kode.</strong> 110 regelkort i YAML med tærskler, betingelser og kilde-ID'er. 42 stregkoderegler er slået til i brugerfladen. For 40 af dem slår en test kildehenvisningen op i selve kildedokumentet.</li>
+      <li><strong>Python og FastAPI</strong> med login og adgang pr. sag. PyMuPDF læser PDF'en, zxing-cpp afkoder stregkoden, og Tesseract er fallback, når teksten er kurver. Resultater gemmes i SQLite.</li>
+      <li><strong>2.179 automatiske testcases</strong> og en regressionsbaseline med 1.110 låste resultater på 10 rigtige designs. GitHub Actions deployer kun, når alt er grønt.</li>
+      <li><strong>AI kun ét sted.</strong> Claude vision foreslår stregkodens placering, når layoutanalysen giver "kan ikke tjekke". Svaret kan højst blive rådgivende.</li>
+    </ul>
+    <div class="decision"><span class="label">Beslutning · 21. september 2026</span>
+      <p>Serveren må aldrig kunne nå bureauets filserver. Produktdata som varenummeret hentes i stedet af et lille program på medarbejderens egen maskine, som kun kan læse og kun svarer lokalt.</p>
+    </div>
+    <div class="decision"><span class="label">Beslutning · 9. juli 2026</span>
+      <p>Systemet siger aldrig "godkendt". Er alle automatiske tjek uden fund, bliver dommen "afventer manuel bekræftelse, ikke klar til produktion". Et menneske kan afgøre punkter, der kræver vurdering, men ikke omstøde en dom, systemet har målt.</p>
+    </div>
+    <p>Version 1 kom på server i september 2026, men blev ikke taget i brug af bureauet.</p>
+  </div>
+</section>
+
+<!-- 5 -->
+<section id="revisionen">
+  <div class="wrap">
+    <p class="kicker">4 · Revisionen · august til oktober 2026</p>
+    <h2>Mange grønne tests betød ikke, at systemet fangede fejl</h2>
+    <p>Da systemet voksede, satte jeg agenter til at revidere det: Hvor kan systemet sige "bestået" uden grund? Kan en regel overhovedet dømme? Hvad gør koden egentlig? Revisionerne fandt det, testtallet ikke kunne vise.</p>
+    <figure>
+      <img src="assets/diagrams/06_revision_da.svg" alt="Revisionens fund og beslutninger">
+    </figure>
+    <div class="finding"><span class="label">Fund · august 2026</span>
+      <p>Revisionen af fødevarereglerne fandt fem måder, en fejl kunne slippe igennem som bestået. Et eksempel: nettomængden blev "fundet" i næringsdeklarationens "pr. 100 g". Et andet: allergenfremhævning blev godkendt, bare fordi der fandtes en ingrediensliste. Alle fem blev afvæbnet.</p>
+    </div>
+    <ul>
+      <li>Kendte falske "bestået" på stregkoder gik fra 5 til 0.</li>
+      <li>Stregkodekort uden efterprøvet kilde gik fra 33 af 41 til 3 af 42.</li>
+      <li>De 10 rigtige designs er gået til tryk, men ingen har efterprøvet dem uafhængigt. De er en baseline, der fanger utilsigtede ændringer, ikke en facitliste.</li>
+      <li>AS-IS-revisionen i september gennemgik hele koden og mærkede hvert udsagn VERIFIED, PARTIAL eller UNKNOWN. Analysen af, hvad et fuldt system skal kunne, blev bagefter efterprøvet i en uafhængig gennemgang.</li>
+    </ul>
+    <div class="decision"><span class="label">Beslutning · oktober 2026</span>
+      <p>En regel må først give en rød fejl, når den har bestået tre prøver: ingen falske fejl på godkendte filer, set dumpe mindst én gang, og fangstraten er målt. Fødevarereglerne skjules som ubeviste, indtil de består.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section id="retningsskift">
+  <div class="wrap">
+    <p class="kicker">5 · Nyt design og retningsskift · oktober til november 2026</p>
+    <h2>Et TO-BE, der aldrig blev bygget, og hvorfor det var rigtigt</h2>
+    <p>Efter revisionen afklarede jeg 15 beslutninger i en struktureret runde spørgsmål og svar og skrev et TO-BE med 12 moduler. Det beskrev version 2 som en videreudvikling af websystemet. Tre af de bærende idéer:</p>
+    <figure>
+      <img src="assets/diagrams/07_maturity_da.svg" alt="Modenhedstrappen: skjult, tjek, bevist">
+      <figcaption>En regel rykker kun op, når den har bevist, at den kan fange en fejl.</figcaption>
+    </figure>
+    <figure>
+      <img src="assets/diagrams/08_absence_da.svg" alt="Fem tilstande for noget, der mangler">
+      <figcaption>"Mangler" er ikke ét svar. Hver forklaring kræver sin egen handling.</figcaption>
+    </figure>
+    <figure>
+      <img src="assets/diagrams/09_journey_da.svg" alt="Brugerrejsen fra syv trin til fire">
+      <figcaption>Brugerrejsen i version 1 og i TO-BE.</figcaption>
+    </figure>
+    <div class="decision"><span class="label">Beslutning · 21. november 2026</span>
+      <p>Retningsskift. Jeg venter ikke på et interview eller en gennemgang hos bureauet, før jeg bygger. I stedet bygges ét regelområde ad gangen som en Claude-skill, og vi lærer af hvert område. Principperne fra TO-BE følger med: de tre prøver, statusserne, at intet kaldes "godkendt", og at kundepraksis holdes adskilt fra standarden.</p>
+    </div>
+    <div class="decision"><span class="label">Beslutning · 21. november 2026</span>
+      <p>Først kun regelbaserede krav: lov, standarder og mærkningsordninger. Layout og kunderegler kommer senere. Et område vælges ikke kun efter, hvor tit det nævnes i korrekturer, men også hvis det i dag tjekkes manuelt uden at blive nævnt.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section id="version-2">
+  <div class="wrap">
+    <p class="kicker">6 · Version 2 i dag</p>
+    <h2>Én skill pr. regelområde, med målinger i kode og forklaringer fra AI</h2>
+    <p>Hvert område er en Claude-skill: en vejledning til modellen, et målescript i Python og en kildeliste med afsnit og sidetal. Scriptet måler og giver status. Modellen ser på billederne, spørger om det, der mangler, og forklarer resultatet til grafikeren.</p>
+    <figure>
+      <img src="assets/diagrams/04_v2_process_da.svg" alt="Processen pr. område i version 2">
+    </figure>
+    <div class="decision"><span class="label">Beslutning · 22. november 2026</span>
+      <p>En rettelse er først færdig, når en frisk agent, der ikke har set facit, har gentestet den. Den, der byggede et område, laver ikke selv kildekontrollen.</p>
+    </div>
+
+    <h3>Demo: stregkode-skillen på en opdigtet etiket</h3>
+    <p>Etiketten er lavet til demoen med to fejl, som skillen ikke kender på forhånd: koden er for lav, og den sidder for tæt på kanten. Billederne og notatet er fra en rigtig kørsel af den offentlige udgave.</p>
+    <div class="two">
+      <figure>
+        <img src="assets/demo/oversigt_s1.png" alt="Oversigt over etiketten med koden markeret">
+        <figcaption>Siden med koden (rød) og etikettens kant (blå).</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/demo/kode_1.png" alt="Stregkoden med målte zoner tegnet ind">
+        <figcaption>Rød: stregerne som målt. Grøn: lyszonerne. Orange: så høj skulle koden være.</figcaption>
+      </figure>
+    </div>
+    <div class="notat">
+      <h4>Skal rettes</h4>
+      <p><span class="pill ret">RET</span><strong>Stregkodens højde (SK-02).</strong> Målt 17,40 mm. GS1 kræver mindst 22,85 mm ved denne størrelse, efter tabel 5-44. Målingen kan være ca. 0,05 mm forkert, så selv med den usikkerhed er koden for lav.</p>
+      <h4>Tag stilling til</h4>
+      <p><span class="pill vurder">VURDER</span><strong>Afstand til kanten (SK-11).</strong> 5,0 mm fra etikettens kant. GS1 siger "når muligt" mindst 8 mm, så det er ikke et ubetinget krav.</p>
+      <p><span class="pill vurder">VURDER</span><strong>Varenummer (VD-01).</strong> Gyldigt kontrolciffer, men om det er produktets rigtige nummer, kan kun varedata sige.</p>
+      <h4>Ingen fund på de tjekkede punkter</h4>
+      <p><span class="pill ingen">INGEN_FUND</span>Størrelse, guard bars, lyszoner, luft til cifrene, cifrenes størrelse og indhold, kontrast. Det er ikke en godkendelse.</p>
+    </div>
+    <p class="codecap">Hele notatet, målingerne og billederne ligger i <a href="https://github.com/OliverBruhn-coder/cameleonproof-portfolio/tree/main/stregkodekorrektur/eksempel">stregkodekorrektur/eksempel</a>.</p>
+
+    <h3>Tre steder i koden</h3>
+    <p><strong>Hvert tjek peger på en kilde.</strong> Et tjek i scriptet har et tjekpunkt-ID, et kilde-ID og stedet i GS1-standarden. Derfor kan hvert fund i rapporten slås op.</p>
+<pre><code>TJEKPUNKT = {
+    "stoerrelse": ("SK-01", "K-01", "GS1 v26 tabel 5-44 (5.12.3.1)", "GS1"),
+    "hoejde":     ("SK-02", "K-02, K-03", "GS1 v26 tabel 5-44 med fodnote (**), 6.3.3.4", "GS1"),
+    "kant":       ("SK-11", "K-09, K-10", "GS1 v26 6.3.3.3 (når muligt), 6.2.3.3", "GS1"),
+    ...
+}</code></pre>
+    <p class="codecap"><a href="https://github.com/OliverBruhn-coder/cameleonproof-portfolio/blob/main/stregkodekorrektur/scripts/maal.py#L113">scripts/maal.py, linje 113</a></p>
+
+    <p><strong>Målingens usikkerhed afgør status.</strong> Er koden for lav, også når man trækker måleusikkerheden fra, er det RET. Er den lige under kravet, men inden for usikkerheden, er det VURDER. En grafiker skal ikke have en rød fejl på en fil, der måske er korrekt.</p>
+<pre><code>if h + TOL_MM &lt; krav_h * 0.998:      # for lav, selv med usikkerheden
+    st = ret
+elif h &lt; krav_h * 0.998:             # lige under, men inden for usikkerheden
+    st = VURDER
+else:
+    st = INGEN_FUND</code></pre>
+    <p class="codecap"><a href="https://github.com/OliverBruhn-coder/cameleonproof-portfolio/blob/main/stregkodekorrektur/scripts/maal.py#L1046">scripts/maal.py, linje 1046</a>. Forkortet. <code>TOL_MM</code> er 0,05 mm, afprøvet på 14 vektor-PDF'er med kendt facit.</p>
+
+    <p><strong>"Ingen fund" er ikke en godkendelse.</strong> Rapporten lister de punkter, der er tjekket uden fund, og ved siden af alt det, der ikke blev tjekket.</p>
+<pre><code># INGEN_FUND er ikke en godkendelse.
+resultat["ingen_fund_paa"] = sorted({f"{t['tjekpunkt']} {t['navn']}" for t in alle
+                                     if t["status"] == INGEN_FUND and t.get("tjekpunkt")})
+resultat["ikke_tjekket"] = IKKE_TJEKKET + [...]</code></pre>
+    <p class="codecap"><a href="https://github.com/OliverBruhn-coder/cameleonproof-portfolio/blob/main/stregkodekorrektur/scripts/maal.py#L1703">scripts/maal.py, linje 1703</a></p>
+
+    <h3>Status for de tre områder</h3>
+    <div class="tablewrap"><table>
+      <tr><th>Område</th><th>Version</th><th>Testet</th></tr>
+      <tr><td>Stregkode (GS1)</td><td>2.1</td><td>Regression på 45 filer. Måleusikkerheden afprøvet på 14 vektor-PDF'er. En gennemgang mod GS1 fandt ti forkerte henvisninger, som er rettet og kontrolleret af en uafhængig agent</td></tr>
+      <tr><td>Nettoindhold og ℮-mærke</td><td>0.6</td><td>Første blindtest fandt 12 af 14 fejlvarianter og gav ingen falsk RET på 6 fejlfri filer. Målingerne afveg højst 0,037 mm fra en uafhængig agents måling</td></tr>
+      <tr><td>Allergener</td><td>0.1</td><td>Første testrunde fandt 8 af 10 fejlfiler. Anden runde missede to nye varianter. De er rettet og gentestet af en ny agent</td></tr>
+    </table></div>
+    <p>Den offentlige udgave af stregkode-skillen har kun GS1-laget. Kundepraksis og bureauets skabeloner er taget ud. Den giver samme mål og statusser som den interne udgave på alle 20 testfiler, og dens 8 automatiske tests består.</p>
+  </div>
+</section>
+
+<!-- 8 -->
+<section id="arbejdsmetode">
+  <div class="wrap">
+    <p class="kicker">7 · Sådan arbejder jeg</p>
+    <h2>Agenterne skriver koden. Jeg står inde for, hvad systemet påstår</h2>
+    <p>Jeg er cand.merc., ikke uddannet programmør. Koden og de fleste dokumenter i projektet er skrevet af AI-kodeagenter, især Claude Code. I version 1 er Claude medforfatter på 133 af 175 commits. Min del er problemet, kravene, beslutningerne og kontrollen.</p>
+    <div class="tablewrap"><table>
+      <tr><th></th><th>Hvad</th><th>Hvem</th></tr>
+      <tr><td><strong>Besluttet</strong></td><td>Problem og afgrænsning, hvilke områder der bygges først, statusmodellen, sikkerhed og dataadgang, testmetode, fejlmargin, hvad AI må og ikke må</td><td>Mig</td></tr>
+      <tr><td><strong>Bygget</strong></td><td>Kode, tests, rapporter, opsætning af server og dokumentation</td><td>AI-kodeagenter ud fra mine skrevne direktiver</td></tr>
+      <tr><td><strong>Kontrolleret</strong></td><td>Resultater på kendte filer, revisioner, blindtest og kildekontrol</td><td>Mig, sammen med uafhængige agenter uden facit</td></tr>
+    </table></div>
+    <figure>
+      <img src="assets/diagrams/03_rules_ai_human_da.svg" alt="Arbejdsdelingen mellem regelmotor, AI og menneske">
+    </figure>
+    <figure>
+      <img src="assets/diagrams/10_method_da.svg" alt="Metoden vælges pr. opgave med samme kvalitetskrav">
+    </figure>
+
+    <h3>Beslutningslog</h3>
+    <p>Mine egne beslutninger, som de står med dato i projektets filer. Beslutninger, der bygger på bureauets eller kundernes praksis, er udeladt.</p>
+    <div class="tablewrap"><table>
+      <tr><th>Dato</th><th>Beslutning</th><th>Hvorfor, og hvad der skete</th></tr>
+      <tr><td class="date">9. jul 2026</td><td>Først kun bureauets egne filer</td><td>Det er dem, korrekturen faktisk kører på. Andre formater kører en mere forsigtig vej med ærlige "kan ikke tjekke" i stedet for gæt</td></tr>
+      <tr><td class="date">9. jul 2026</td><td>Aldrig "godkendt"</td><td>Uden fund bliver dommen "afventer manuel bekræftelse". Et menneske kan bekræfte, men ikke omstøde en målt dom</td></tr>
+      <tr><td class="date">7. aug 2026</td><td>Rigtige designs er en baseline, ikke en facitliste</td><td>De er gået til tryk, men ikke efterprøvet uafhængigt. Det førte til tests med syntetiske fejl, der viser, om en regel kan dømme</td></tr>
+      <tr><td class="date">17. sep 2026</td><td>Systemet giver aldrig selv bureauets godkendelse til tryk</td><td>Godkendelsen er bureauets ansvar, også når systemet senere kan foreslå rettelser</td></tr>
+      <tr><td class="date">17. sep 2026</td><td>Ikke låst til én kunde</td><td>Der startes ét sted, men arkitekturen må ikke bindes til det</td></tr>
+      <tr><td class="date">21. sep 2026</td><td>Serveren når aldrig filserveren</td><td>Et læseprogram på medarbejderens maskine henter fakta lokalt. En kompromitteret server kan ikke nå arkivet</td></tr>
+      <tr><td class="date">26. sep 2026</td><td>Kanten måles til den faktiske stanselinje</td><td>Også på runde og formede etiketter. Under 8 mm er rådgivende. Går koden ud over kanten, er det en fejl</td></tr>
+      <tr><td class="date">okt 2026</td><td>De tre prøver</td><td>En regel må først give en rød fejl, når den har bestået dem. Fødevarereglerne blev skjult som ubeviste</td></tr>
+      <tr><td class="date">okt 2026</td><td>Kode til tal, AI til sprog</td><td>Målinger og geometri i almindelig kode. AI foreslår, og et menneske bekræfter</td></tr>
+      <tr><td class="date">21. nov 2026</td><td>Retningsskift til skills</td><td>Ét regelområde ad gangen i stedet for et nyt stort websystem. Vi lærer af hvert område</td></tr>
+      <tr><td class="date">21. nov 2026</td><td>Først kun regelbaserede krav</td><td>Lov, standarder og mærkningsordninger. Layout og kunderegler senere</td></tr>
+      <tr><td class="date">21. nov 2026</td><td>Områder vælges ikke kun efter hyppighed</td><td>Også det, der i dag tjekkes manuelt uden at blive nævnt, er værd at automatisere</td></tr>
+      <tr><td class="date">22. nov 2026</td><td>Gentest af en frisk agent</td><td>En rettelse er først færdig, når en agent uden facit har testet den igen</td></tr>
+      <tr><td class="date">22. nov 2026</td><td>Måleusikkerheden siges altid</td><td>0,05 mm, sagt så en grafiker forstår det. Tæt på grænsen bliver VURDER, ikke RET</td></tr>
+    </table></div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section id="status">
+  <div class="wrap">
+    <p class="kicker">8 · Status og begrænsninger</p>
+    <h2>Hvad der virker, og hvad der ikke gør endnu</h2>
+    <p><strong>Systemet er under løbende udvikling og afprøves i et pilotforløb med konkrete korrekturopgaver hos Cameleon.</strong> Der er endnu ingen resultater fra piloten at vise.</p>
+    <ul>
+      <li><strong>Brug i hverdagen:</strong> Version 1 blev ikke taget i brug. Version 2 er endnu ikke en del af den daglige korrektur.</li>
+      <li><strong>Bureauets godkendelse:</strong> Ingen områder er gennemgået af en fagperson hos bureauet. Tjekpunkter og kilder er mine og agenternes arbejde, kontrolleret mod primærkilderne.</li>
+      <li><strong>Dækning:</strong> Kun regelbaserede krav i de nævnte områder. Kundekrav og layout er ikke med.</li>
+      <li><strong>Afprøvning:</strong> Måleusikkerheden er afprøvet på vektor-PDF'er, ikke på billedfiler, trykte filer eller med en verifier.</li>
+      <li><strong>Forretningsværdi:</strong> Færre fejl, færre ekstra runder og mere tid til det, der kræver skøn. Intet af det er målt endnu. Piloten skal give de første tal.</li>
+    </ul>
+    <p>Koden, regelbasen og bureauets filer i det fulde system er fortrolige og ligger ikke her. Den offentlige kode vises som arbejdsprøve. Alle rettigheder forbeholdes.</p>
+    <div class="buttons">
+      <a class="btn primary" href="https://linkedin.com/in/oliver-bruhn-71607317a">Kontakt mig på LinkedIn</a>
+      <a class="btn" href="pdf/CameleonProof_case_study_DA.pdf">Casen som PDF</a>
+      <a class="btn" href="https://github.com/OliverBruhn-coder/cameleonproof-portfolio">Repoet på GitHub</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">Oliver Bruhn Lyngaa Wegeberg · november 2026 · <a href="en/">English version</a></div>
+</footer>
+
+</body>
+</html>
