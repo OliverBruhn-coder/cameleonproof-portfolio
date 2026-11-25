@@ -1,0 +1,51 @@
+{
+  "_note": "Fictitious rules for an illustrative example. Thresholds and the specification 'SYN-SPEC' are invented. They are not legal requirements and not CameleonProof's rule base.",
+  "rules": [
+    {
+      "id": "SYN-01",
+      "kind": "minimum",
+      "title": "Digits in the quantity statement are tall enough",
+      "field": "quantity_digit_height_mm",
+      "min": 3.5,
+      "margin": 0.05,
+      "unit": "mm",
+      "source": "SYN-SPEC 2.1 (fictitious)"
+    },
+    {
+      "id": "SYN-02",
+      "kind": "checksum",
+      "title": "Barcode number has a valid check digit",
+      "field": "gtin",
+      "source": "GS1 mod-10 check digit (public algorithm)"
+    },
+    {
+      "id": "SYN-03",
+      "kind": "minimum",
+      "title": "Left quiet zone next to the barcode is wide enough",
+      "field": "left_quiet_zone_mm",
+      "min": 3.0,
+      "margin": 0.05,
+      "unit": "mm",
+      "source": "SYN-SPEC 4.2 (fictitious)"
+    },
+    {
+      "id": "SYN-04",
+      "kind": "presence",
+      "title": "A best-before text is present",
+      "text": "best before",
+      "source": "SYN-SPEC 5.1 (fictitious)"
+    },
+    {
+      "id": "SYN-05",
+      "kind": "manual",
+      "title": "Barcode colours give enough contrast in print",
+      "question": "Check the printed colours: is the bar colour dark enough on this background?",
+      "source": "SYN-SPEC 4.5 (fictitious)"
+    }
+  ],
+  "not_covered": [
+    "anything outside SYN-01 to SYN-05",
+    "customer-specific requirements",
+    "layout and design"
+  ]
+}
